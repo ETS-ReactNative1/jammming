@@ -26,6 +26,7 @@ const Spotify = {
     if (accessTokenMatch && expiresInMatch) {
       const accessToken = accessTokenMatch[1];
       const expiresIn = Number(expiresInMatch[1]);
+      return accessToken;
     }
     else {
       window.location = accessURL;
@@ -43,7 +44,7 @@ const Spotify = {
       return response.json();
     }).then(jsonResponse => {
       if(jsonResponse.tracks) {
-        return jsonResponse.tracks.map(track => ({
+        return jsonResponse.tracks.items.map(track => ({
           id: track.id,
           name: track.name,
           artist: track.artists[0].name,
