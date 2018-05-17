@@ -19,8 +19,9 @@ const Spotify = {
   getAccessToken() {
     let parsedToken = queryString.parse(window.location.href);
     let accessToken = parsedToken.access_token;
-    let expires = parsedToken.expires_in;
-    return accessToken;
+    if (accessToken) {
+      return accessToken;
+    } else if (!accessToken && )
   },
 
   getExpiration() {
@@ -49,48 +50,48 @@ const Spotify = {
     })
   },
 
-  savePlaylist(name, trackURIs) {
-    if (name && trackURIs != []) {
+  savePlaylist(playlistName, trackURIs) {
+    if (playlistName && trackURIs) {
       const accessToken = this.getAccessToken();
-      let userID = null;
+      let userID = '';
       let playlistID = null;
+
+
       fetch(`https://api.spotify.com/v1/me`, {
         headers: {
           Authorization: `Bearer ${this.getAccessToken()}`
         }
-      }).then(response => { response.json() }
-      ).then(jsonResponse => {userID = jsonResponse.user_id});
+      }).then(response => { return response.json() }
+      ).then(jsonResponse => {userID.replace('', jsonResponse.user_id)});
+
 
       fetch(`https://api.spotify.com/v1/users/${userID}/playlists`, {
         headers: {
-          Authorization: `Bearer ${this.getAccessToken()}`
+          Authorization: `Bearer ${this.getAccessToken()}`,
+          "Content-Type": "application/json"
         },
         method: 'POST',
-        body: JSON.stringify({id: '200'})
+        body: JSON.stringify({name: playlistName})
       }).then(response => {
         if (response.ok) {
           return response.json();
-        }
-        throw new Error('Request failed!');
-      }, networkError => console.log(networkError.message)
-      ).then(jsonResponse => {
-        playlistID = jsonResponse.id
+        }}).then(jsonResponse => {
+        playlistID.push(jsonResponse.id)
       });
+
 
       fetch(`https://api.spotify.com/v1/users/${userID}/playlists/${playlistID}/tracks`, {
         headers: {
-          Authorization: `Bearer ${this.getAccessToken()}`
+          Authorization: `Bearer ${this.getAccessToken()}`,
+          "Content-Type": "application/json"
         },
         method: 'POST',
-        body: JSON.stringify({id: '200'})
+        body: JSON.stringify({uris: trackURIs})
       }).then(response => {
         if (response.ok) {
           return response.json();
-        }
-        throw new Error('Request failed!');
-      }, networkError => console.log(networkError.message)
-      ).then(jsonResponse => {
-        playlistID = jsonResponse.id
+        }}).then(jsonResponse => {
+        playlistID.push(jsonResponse.id)
       });
     } else {
       return;
