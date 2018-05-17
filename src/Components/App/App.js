@@ -26,7 +26,7 @@ class App extends React.Component {
       return;
     } else {
       this.setState({
-        playlistTracks: this.state.playlistTracks.concat(track)
+        playlistTracks: this.state.playlistTracks.push(track)
       })
     }
   }
@@ -66,10 +66,9 @@ class App extends React.Component {
       <div>
         <h1>Ja<span className="highlight">mmm</span>ing</h1>
         <div className="App">
-          <SearchBar />
+          <SearchBar onSearch={this.search}/>
           <div className="App-playlist">
             <SearchResults searchResults={this.state.searchResults} onAdd={this.addTrack} />
-            <SearchBar onSearch={this.search} />
             <Playlist playlistName={this.state.playlistName} playlistTracks={this.state.playlistTracks} onRemove={this.removeTrack} onNameChange={this.updatePlaylistName} onSave={this.savePlaylist}/>
           </div>
         </div>

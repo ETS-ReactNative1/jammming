@@ -2,6 +2,7 @@ import queryString from 'query-string';
 
 const clientID = '959b4afcdfe3414bbe2488cadf59f42b';
 const clientSecret = '56d4f2b093b0442d81233f47592dbf38';
+let accessToken;
 const spotify_url = 'https://accounts.spotify.com/authorize'
 const redirect_uri = 'http://localhost:3000/'
 
@@ -12,28 +13,31 @@ const index2 = Math.floor(Math.random() * alphanumeric.length);
 const index3 = Math.floor(Math.random() * alphanumeric.length);
 const state = alphanumeric[index1] + alphanumeric[index2] + alphanumeric[index3];
 
-const accessURL = `${spotify_url}?client_id=${clientID}&response_type=token&scope=playlist-modify-public&state=${state}&redirect_uri=${redirect_uri}`
+const accessURL = `${spotify_url}?client_id=${clientID}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirect_uri}`
 //const finalURL = `${redirect_uri}callback#access_token=${accessToken}&token_type=Bearer&expires_in=${expires}&state=${state}`
 
 const Spotify = {
   getAccessToken() {
-    let parsedToken = queryString.parse(window.location.href);
-    let accessToken = parsedToken.access_token;
     if (accessToken) {
       return accessToken;
-    } else if (!accessToken && )
+    }
+    const accessTokenMatch = window.location.href.match(/access_token=([^&]*)/);
+    const expiresInMatch = window.location.href.match(/expires_in=([^&]*)/);
+    if (accessTokenMatch && expiresInMatch) {
+      const accessToken = accessTokenMatch[1];
+      const expiresIn = Number(expiresInMatch[1]);
+    }
+    else {
+      window.location = accessURL;
+    }
   },
 
-  getExpiration() {
-    let parsedToken = queryString.parse(window.location.href);
-    let expires = parsedToken.expires_in;
-    return expires;
-  },
 
   search(term) {
+    const accessToken = Spotify.getAccessToken();
     return fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`, {
       headers: {
-        Authorization: `Bearer ${this.getAccessToken()}`
+        Authorization: `Bearer ${accessToken}`
       }
     }).then(response => {
       return response.json();
@@ -49,6 +53,7 @@ const Spotify = {
       }
     })
   },
+
 
   savePlaylist(playlistName, trackURIs) {
     if (playlistName && trackURIs) {
@@ -98,5 +103,6 @@ const Spotify = {
     }
   }
 }
+
 
 export default Spotify;
