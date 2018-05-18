@@ -57,50 +57,42 @@ const Spotify = {
 
 
   savePlaylist(playlistName, trackURIs) {
-    if (!playlistName && !trackURIs.length) {
+    if (!playlistName || !trackURIs.length) {
       return;
     } else {
       const accessToken = this.getAccessToken();
       let userID = '';
-      let playlistID = null;
+      let playlistID;
 
 
-      fetch(`https://api.spotify.com/v1/me`, {
+      return fetch(`https://api.spotify.com/v1/me`, {
         headers: {
           Authorization: `Bearer ${accessToken}`
         }
-      }).then(response => { return response.json() }
-      ).then(jsonResponse => {userID.replace('', jsonResponse.user_id)});
-
-
-      fetch(`https://api.spotify.com/v1/users/${userID}/playlists`, {
+      }).then(response => response.json()
+    ).then(jsonResponse => { userID = jsonResponse.id;
+      return fetch(`https://api.spotify.com/v1/users/${userID}/playlists`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json"
         },
         method: 'POST',
         body: JSON.stringify({name: playlistName})
-      }).then(response => {
-        if (response.ok) {
-          return response.json();
-        }}).then(jsonResponse => {
-        playlistID.push(jsonResponse.id)
-      });
-
-
-      fetch(`https://api.spotify.com/v1/users/${userID}/playlists/${playlistID}/tracks`, {
+      }).then(response => response.json()
+      ).then(jsonResponse => { playlistID = jsonResponse.id;
+      return fetch(`https://api.spotify.com/v1/users/${userID}/playlists/${playlistID}/tracks`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json"
         },
         method: 'POST',
         body: JSON.stringify({uris: trackURIs})
-      }).then(response => {
-        if (response.ok) {
-          return response.json();
-        }}).then(jsonResponse => {
-        playlistID.push(jsonResponse.id)
-      });
+      }).then(response => response.json()
+      ).then(jsonResponse => { playlistID = jsonResponse.id;
+      });});});
+      console.log(userID);
+
+
     }
   }
 }
