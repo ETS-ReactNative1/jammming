@@ -18,8 +18,8 @@ class SearchBar extends React.Component {
     })
   }
 
-  pressEnter() {
-    this.props.onKeyPress(this.state.searchURI)
+  pressEnter(event) {
+    this.props.onKeyPress(event, this.state.searchURI)
   }
 
   search() {

@@ -59,8 +59,10 @@ class App extends React.Component {
     );
   }
 
-  pressEnter(term) {
-    if (term.key === 'Enter') {
+  pressEnter(event, term) {
+    const keyPressed = event.keyCode || event.which;
+    const getKeyPressed = event.key;
+    if (keyPressed === 13 || getKeyPressed === 'Enter') {
       Spotify.search(term).then(tracks =>
         this.setState({
           searchResults: tracks
