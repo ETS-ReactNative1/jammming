@@ -1,9 +1,9 @@
-const clientID = '959b4afcdfe3414bbe2488cadf59f42b';
-const clientSecret = '56d4f2b093b0442d81233f47592dbf38';
+const clientID = process.env.REACT_APP_CLIENT_ID;
+const clientSecret = process.env.REACT_APP_CLIENT_SECRET;
 let accessToken;
 const spotify_url = 'https://accounts.spotify.com/authorize'
 //const redirect_uri = 'http://localhost:3000/'
-const redirect_uri = 'https://abak_east_domain.surge.sh'
+const redirect_uri = process.env.REACT_APP_REDIRECT_URI;
 
 // Generate a random state for extra security.
 const alphanumeric = '0123456789abcdefghijklmnopqrstuvwxyz';
@@ -95,6 +95,5 @@ const Spotify = {
     }
   }
 }
-
 
 export default Spotify;
